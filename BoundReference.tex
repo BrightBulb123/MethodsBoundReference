@@ -527,7 +527,7 @@
                 \end{tblr}
             \end{SummaryBox}
             
-            \begin{SummaryBox}[title=Inverse functions, sidebyside, left=0pt, right=0pt, righthand ratio=0.45]
+            \begin{SummaryBox}[title=Inverse functions, sidebyside, right=0pt, righthand ratio=0.45]
                 \begin{itemize}
                     \item If $f$ is a \textbf{one-to-one function}, then a new function $f^{-1}$, called the \textbf{inverse} of $f$, may be defined by
                     \[
@@ -546,13 +546,13 @@
                     \end{itemize}
                     \item The point $(x,y)$ is on the graph of $f^{-1}$ if and only if the point $(y,x)$ is on the graph of $f$. Thus, the graph of $f^{-1}$ is a \textbf{reflection} of the graph of $f$ in the line $y=x$.
                     \item If $f$ is strictly increasing, then $f^{-1}$ is also strictly increasing (and vice versa).
-                    \item \textbf{At least one} of the intersections of $f$ and $f^{-1}$ lie on the line $y=x$ (if the functions intersect at all, that is), so, to solve for this intersection point, either $f(x) = x$ or $f^{-1}(x) = x$ will suffice.
+                    \item For a continuous function $f$ (and some non-continuous functions, too), \textbf{at least one} of the intersections of $f$ and $f^{-1}$ lie on the line $y=x$ (if the functions intersect at all, that is), so, to solve for this intersection point, either $f(x) = x$ or $f^{-1}(x) = x$ will suffice.
                     \begin{itemize}[topsep=0pt]
                         \item If ``just one intersection point'' is needed, then the line $y=x$ is \textbf{tangential} to both functions at that point. This means that the gradients of $f$, $f^{-1}$, and $y=x$ are equal at that point (they are all $1$, as the gradient of $y=x$ is always $1$).
                     \end{itemize}
                 \end{itemize}
                 \tcblower
-                \begin{tikzpicture}
+                \begin{tikzpicture}[scale=0.95]
                     \begin{axis}[
                         My Style 1,
                         xmin=-0.25,
