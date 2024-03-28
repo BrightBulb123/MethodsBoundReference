@@ -473,7 +473,8 @@
                     \item Given that \highmath{$\ran(g) \subseteq \dom(f)$}, we can define the new function $h$ as a \textbf{composition} of $f$ with $g$.
                     \item This is written $h = f \circ g$ (read `composition of $g$ followed by $f$') and the rule for $h$ is given by $h(x) = f(g(x))$.
                     \begin{itemize}[topsep=0pt]
-                        \item Generally, \highmath{$\dom(h) = \dom(g)$} (but \textbf{do} check any restrictions the final function imposes).
+                        \item \highmath{\( \dom(h) = \curls*{ x \in \dom(g) : g(x) \in \dom(f) } \)}. In other words, the domain of \( h \) is the set of \( x \) such that \( x \in \dom(g) \), and using those \( x \)-values, the range of \( g(x) \) has to fit within the domain of \( f \) (because otherwise, \( f \) would be undefined for values that didn't belong in its domain).
+                        \item \highmath{\( \ran(h) = f\pars*{ \ran(g) \cap \dom(f) } \)}. This is another way of saying that the range of \( h \) is the range of \( f(x) \) where \( x \in \dom(h) \).
                     \end{itemize}
                     \item Generally, \highmath{$f \circ g \neq g \circ f$}
                 \end{itemize}
