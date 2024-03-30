@@ -1,5 +1,7 @@
 \documentclass[12pt,a4paper,titlepage]{article}
 
+\usepackage{ifplatform}  % needed to input conditionals to achieve platform-independent code
+
 \usepackage[bitstream-charter]{mathdesign}
 
 \usepackage[T1]{fontenc}
@@ -39,7 +41,7 @@
 \usepackage{varwidth}
 
 \usepackage{tcolorbox}
-\tcbuselibrary{skins, theorems, breakable}
+\tcbuselibrary{skins, theorems, breakable, minted}
 
 \usepackage{tabularray}
 
@@ -113,9 +115,6 @@
 
 \usepackage[pdfborder={0 0 0}, colorlinks=false, linkcolor=black, pdfencoding=auto, pdfpagemode=UseNone, psdextra]{hyperref}
 
-\title{Mathematical Methods --- Bound Reference}
-
-
 \setlength{\multicolsep}{6.0pt plus 2.0pt minus 1.5pt}% 50% of original values
 
 \newlength{\tcolorboxtitleYshift}
@@ -137,27 +136,28 @@
 
 \colorlet{highmathColour}{NavyBlue!75!black}
 
-\tcbset{shield externalize}
-
-\tcbsetforeverylayer{%
-    enhanced,
-    colback=SummaryBoxBackColour,
-    colframe=SummaryBoxRuleColour,
-    fonttitle=\Large\bfseries,
-    arc=3.5mm,
-    sharp corners,
-    boxsep=0pt,
-    left=5mm,  % 1 + 4 mm
-    right=5mm,  % 1 + 4 mm
-    top=3mm,  % 1 + 2 mm
-    bottom=3mm,  % 1 + 2 mm
-    middle=3mm,  % 1 + 2 mm
-    toptitle=1mm,  % 1 + 0 mm
-    bottomtitle=1mm,  % 1 + 0 mm
-    titlerule=1pt,
-    titlerule style=red!50!black,
-    varwidth boxed title={0.9\linewidth},
-    halign title=center
+\tcbset{%
+    shield externalize,
+    every box/.style={%
+        enhanced,
+        colback=SummaryBoxBackColour,
+        colframe=SummaryBoxRuleColour,
+        fonttitle=\Large\bfseries,
+        arc=3.5mm,
+        sharp corners,
+        boxsep=0pt,
+        left=5mm,  % 1 + 4 mm
+        right=5mm,  % 1 + 4 mm
+        top=3mm,  % 1 + 2 mm
+        bottom=3mm,  % 1 + 2 mm
+        middle=3mm,  % 1 + 2 mm
+        toptitle=1mm,  % 1 + 0 mm
+        bottomtitle=1mm,  % 1 + 0 mm
+        titlerule=1pt,
+        titlerule style=red!50!black,
+        varwidth boxed title={0.9\linewidth},
+        halign title=center
+    }
 }
 
 \newtcolorbox[use counter=subsection, number within=section, list inside=summaryboxes]{SummaryBox}[1][]{%
@@ -219,6 +219,68 @@
     #1
 }
 
+\ifwindows
+    \tcbset{platform language spec/.style={minted language={"pseudocode.py:VCAALexer -x"}}}
+\else
+    \tcbset{platform language spec/.style={minted language={'pseudocode.py:VCAALexer -x'}}}
+\fi
+
+\NewTCBListing%
+    {codebox}
+    { O{} m }  % 1: extra options, 2: title
+    {
+        reset,
+        enhanced,
+        fonttitle={\bfseries},
+        coltitle=white,
+        title={#2},
+        minted style=colorful,
+        platform language spec,
+        minted options={%
+            breaklines,
+            autogobble,
+            linenos,
+            numbersep=3mm,
+            mathescape,
+            escapeinside=||
+        },
+        listing only,
+        left=5mm,
+        overlay={%
+            \begin{tcbclipinterior} \fill[SummaryBoxTitleColour!95!green!60!white] (frame.south west) rectangle ([xshift=5mm]frame.north west); \end{tcbclipinterior}
+        },
+        #1
+    }
+
+\NewTCBListing%
+    {codeboxwithcomment}
+    { O{} m O{0.3\linewidth} m }  % 1: extra options, 2: title, 3: comment-side width, 4: comment
+    {
+        reset,
+        enhanced,
+        fonttitle={\bfseries},
+        coltitle=white,
+        title={#2},
+        minted style=colorful,
+        platform language spec,
+        minted options={%
+            breaklines,
+            autogobble,
+            linenos,
+            numbersep=3mm,
+            mathescape,
+            escapeinside=||
+        },
+        listing outside comment,
+        comment={#4},
+        righthand width={#3},
+        left=5mm,
+        overlay={%
+            \begin{tcbclipinterior} \fill[SummaryBoxTitleColour!95!green!60!white] (frame.south west) rectangle ([xshift=5mm]frame.north west); \end{tcbclipinterior}
+        },
+        #1
+    }
+
 \newtcbox{\highmath}[1][highmathColour]{%
     enhanced,
     on line,
@@ -235,6 +297,18 @@
     bottomrule=1.5pt,
     toprule=1.5pt
 }
+
+\PassOptionsToPackage{cache=false}{minted}
+\usemintedstyle{friendly}
+
+\ifwindows
+    \NewDocumentCommand{\inlinemintvcaa}{ O{} m }{\IfBlankTF{#1}{\mintinline{"pseudocode.py:VCAALexer -x"}{#2}}{\mintinline{#1}{#2}}}
+\else
+    \NewDocumentCommand{\inlinemintvcaa}{ O{} m }{\IfBlankTF{#1}{\mintinline{'pseudocode.py:VCAALexer -x'}{#2}}{\mintinline{#1}{#2}}}
+\fi
+
+
+\title{Mathematical Methods --- Bound Reference}
 
 
 \begin{document}
@@ -2248,11 +2322,108 @@
                     \end{tikzpicture}
                 \end{SummaryExtensionBox}
             \end{SummaryBox}
+
+        \pagebreak
+        
+        \section{Pseudocode}
             
-            \begin{landscape}
+            \begin{SummaryBox}[title=What is pseudocode]
+                We can use computers to perform calculations using algorithms (\textit{e.g.,} Newton's method, the bisection method, etc.). To accomplish this, we need to describe to the computer how to carry out a specific algorithm. We use \textbf{pseudocode} to do this. A computer would need to have the algorithm described using a programming language, but pseudocode provides a language-agnostic way to accomplish the same thing using an informal set of tokens and keywords.
+            \end{SummaryBox}
+
+            \begin{SummaryBox}[title=Concepts of pseudocode, breakable]
+                \begin{SummaryExtensionBox}[title=Comments]
+                    Comments are lines ignored by the program. They are meant to serve as explanatory sentences or anything else that the reader/programmer should know, but isn't necessarily an instruction for the program.
+                    \begin{codebox}{Comments}
+                        # This is a comment and it will be ignored.
+                        |\( \textit{instructions}\dots \)|
+                        # It is here only for the reader/programmer.
+                        |\( \textit{more instructions}\dots \)|
+                    \end{codebox}
+                \end{SummaryExtensionBox}
                 
-                \section{Counting methods}
+                \begin{SummaryExtensionBox}[title=Conditional statements]
+                    Oftentimes, our programs need to make decisions influenced by other things. We can use \inlinemintvcaa{If} and \inlinemintvcaa{Else} statements.
+                    \begin{codebox}{Conditional statements}
+                        If |\( \textit{condition} \)| Then
+                            |\( \textit{follow these instructions} \)|
+                        Else If |\( \textit{second condition} \)| Then
+                            |\( \textit{if the first condition was false, follow these instructions instead} \)|
+                        Else
+                            |\( \textit{if all else fails, try this instead} \)|
+                    \end{codebox}
+                \end{SummaryExtensionBox}
                 
+                \begin{SummaryExtensionBox}[title=For loops]
+                    When we want to repeat something in a finite sequence of steps, we can use a \inlinemintvcaa{For} loop.
+                    \begin{codeboxwithcomment}{For loop}[0.25\linewidth]{In a \inlinemintvcaa{For} loop, \( \textit{starting\_index} \leq n \).\vspace{0.65\baselineskip}\\If \( \textit{starting\_index} = n \), then the \inlinemintvcaa{For} loop won't execute.}
+                        For |\( \textit{variable\_name} \)| From |\( \textit{starting\_index} \)| To |\( n \)|
+                            |\( \textit{execute these lines } (n - \textit{starting\textunderscore{}index}) \textit{ times} \)|
+                        EndFor
+                    \end{codeboxwithcomment}
+                \end{SummaryExtensionBox}
+                
+                \begin{SummaryExtensionBox}[title=While loops]
+                    When we want to repeat something an infinite amount of time or when we don't know the number of iterations required to complete a task, a \inlinemintvcaa{While} loop can be used.
+                    \begin{codeboxwithcomment}{While loop}[0.5\linewidth]{At the end of every iteration, a \inlinemintvcaa{While} loop goes back to the start, and checks if \textit{condition} is still \inlinemintvcaa{True}.\vspace{0.65\baselineskip}\\If \textit{condition} is \inlinemintvcaa{False} to begin with, then the \inlinemintvcaa{While} loop will never run.}
+                        While |\( \textit{condition} \)| Do
+                            |\( \textit{execute these instructions} \)|
+                        EndWhile
+                    \end{codeboxwithcomment}
+                \end{SummaryExtensionBox}
+                
+                \begin{SummaryExtensionBox}[title=Functions]
+                    Functions provide a way of isolating code for readability and repetition. A \inlinemintvcaa{Function} takes zero, one, or more arguments and returns a value. A function has to be \textbf{defined}, and later \textbf{called} to be executed.
+                    \begin{codeboxwithcomment}{Functions}{Leave the \inlinemintvcaa{Function}'s arguments blank if it takes no arguments.\vspace{0.65\baselineskip}\\Finally, calling the function is required to execute the code within it.}
+                        Define |\( \textit{function\_name} \)|(|\( \textit{arg\_1} \)|, |\( \textit{arg\_2} \)|, |\( \dots \)|)
+                            |\( \textit{execute these instructions} \)|
+                            Return |\( \textit{output\_value} \)|
+                        
+                        |\( \textit{function\_name} \)|(|\( \textit{arg\_1} \)|, |\( \textit{arg\_2} \)|, |\( \dots \)|)
+                    \end{codeboxwithcomment}
+                \end{SummaryExtensionBox}
+                
+                \begin{SummaryExtensionBox}[title=Variables]
+                    Variables, much like in pure math, can be used to store things. Just like we can say \( x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \) in math, we can say the same in pseudocode with one caveat: in this specific case, \( x \) has two values (owing to the use of the \( \pm \) symbol), but in pseudocode, a variable can only have one value at a time. So, to get both our values, we would need to make two variables (one for \( +\sqrt{\Delta} \) and one for \( -\sqrt{\Delta} \)).
+                    \begin{codeboxwithcomment}{Variables}[0.4\linewidth]{In pseudocode, variables \textit{store} values, so we typically see the use of \( \leftarrow \) instead of the \( = \) sign.}
+                        |\( a \)| |\( \leftarrow \)| 42
+                        |\( b \)| |\( \leftarrow \)| |\( a \)| - 43
+                    \end{codeboxwithcomment}
+                \end{SummaryExtensionBox}
+
+                \begin{SummaryExtensionBox}[title=All concepts used in conjunction]
+                    \begin{codebox}{Sum of the factorial of the first \( \bm{n} \) natural numbers}
+                        Define factorial(x)
+                            # Returns x$!$. This function will not work for negative integers; designed only for x${} \in \mathbb{N} \cup \curls{0}$.
+                            result |\( \leftarrow \)| 1  # multiplication happens, so result${} \neq 0$
+                            i |\( \leftarrow \)| x
+                            While i > 0 Do
+                                result |\( \leftarrow \)| result * i  # new $\text{``}$result$\text{''}$ = old $\text{``}$result$\text{''} \times \text{``}$i$\text{''}$
+                                i |\( \leftarrow \)| i - 1  # Decrement i with each iteration
+                            EndWhile
+                            Return result
+                        
+                        Define factorial_sum(n)
+                            # Returns the sum of the factorials of every natural number up to n (inclusive upper bound).
+                            If n |\( \leq \)| 0 Then
+                                Return -1  # Invalid input of $\text{``}$n$\text{''}$
+                            
+                            result |\( \leftarrow \)| 0  # $\text{``}$result$\text{''}$ is different the variable in the factorial function.
+                            For i From 1 To (n + 1)  # $\text{``}$i$\text{''}$ is different too
+                                result |\( \leftarrow \)| result + factorial(i)
+                            EndFor
+    
+                            Return result
+                        
+                        factorial_sum(10)  # Gets the sum of the factorials of 1, 2, ..., 10.
+                    \end{codebox}
+                \end{SummaryExtensionBox}
+            \end{SummaryBox}
+            
+        \begin{landscape}
+            
+            \section{Counting methods}
+
                 \begin{SummaryBox}[title=Pascal's triangle, leftlower=0pt, rightlower=0pt]
                     \begin{itemize}
                         \item Featured below is \textbf{pascal's triangle}, in which each row $n$ and column $k$ correspond to $\binom{n}{k}$.
@@ -2294,8 +2465,8 @@
                     \end{table}
                 \end{SummaryBox}
                 
-            \pagebreak
             
+        \pagebreak
         
         \section{Base functions}
             
