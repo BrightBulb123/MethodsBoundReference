@@ -1334,6 +1334,17 @@
                     \end{itemize}
                 \end{SummaryExtensionBox}
             \end{SummaryBox}
+
+            \begin{SummaryBox}[title=Chain rule]
+                When you have a function, \( q(x) \), that can be expressed as the composition of two simpler functions, \( u = g(x) \) and \( q(x) = f(u) \), which are `chained' together: \( x \xrightarrow{g} u \xrightarrow{f} y \), you can use the \textbf{chain rule} to differentiate such a function like so:
+                \[
+                    q'(x) = f'(g(x)) \cdot g'(x)
+                \]
+                or, in Leibniz notation, where \( u = g(x) \) and \( y = f(u) \):
+                \[
+                    \diff[y]{x} = \diff[y]{u} \cdot \diff[u]{x}
+                \]
+            \end{SummaryBox}
             
             \begin{SummaryBox}[title=Limits]
                 \begin{SummaryExtensionBox}[title=Algebra of limits]
@@ -1437,6 +1448,23 @@
                     \end{tikzpicture}\\
                     This function is \textbf{concave down} over $\pars*{a, b}$}
                 \end{tblr}
+            \end{SummaryBox}
+
+            \begin{SummaryBox}[title=Newton's method]
+                To approximate solutions to equations of the form \( f(x) = 0 \) for \( x \), we can use Newton's method:
+                \[
+                    x_{n + 1} = x_n - \frac{f(x_n)}{f'(x_n)}, \quad \text{where } x_{n + 1} \text{ is the next guess}
+                \]
+                This generates a sequence of \( x \) values where eventually it will converge to a root of the function \( f \).
+
+                Beware, this method may not work as intended if:
+                \begin{itemize}[leftmargin=*]
+                    \item your initial guess, \( x_0 \), is too close to another root, as it will (likely) converge to that root instead of a ``desired'' root instead;
+                    \item the tangent at your initial guess, \( x_n \), is so steep and so is the next guess' tangent in such a way that it leads back to the preivous guess, causing Newton's method to get stuck in an oscillation between \( x_n \) and \( x_{n + 1} \);
+                    \item \( x_{n} \), is too close to a stationary point, making the next guess very far away, pushing it further away from the root;
+                    \item \( f(x_n) \) or \( f'(x_n) \) does not exist for \( x_n \);
+                    \item \( f'(x_n) = 0 \), making the fractional part of the formula undefined.
+                \end{itemize}
             \end{SummaryBox}
             
             \pagebreak
